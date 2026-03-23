@@ -613,15 +613,22 @@ if "Week" in section:
     if week_info["mode"] == "cottage":
         st.info("🌲 **Cottage Mode** — BBQ-forward meal suggestions. Costco shopping list auto-generated.")
 
-    meal_df  = load_meal_plan()
+    meal_df    = load_meal_plan()
     recipes_df = load_recipes()
-    recipe_names = ["— none planned —"] + (
-        recipes_df["Name"].tolist() if not recipes_df.empty and "Name" in recipes_df.columns else []
-    )
+
+    # Safely get recipe names regardless of DataFrame state
+    try:
+        recipe_names = ["— none planned —"] + recipes_df["Name"].tolist()
+    except (KeyError, AttributeError):
+        recipe_names = ["— none planned —"]
 
     # Freezer items for "use from freezer" suggestions
-    freezer_df  = load_freezer()
-    freezer_items = freezer_df["Name"].tolist() if not freezer_df.empty else []
+    try:
+        freezer_df    = load_freezer()
+        freezer_items = freezer_df["Name"].tolist() if not freezer_df.empty and "Name" in freezer_df.columns else []
+    except (KeyError, AttributeError):
+        freezer_df    = pd.DataFrame()
+        freezer_items = []
 
     st.divider()
 
