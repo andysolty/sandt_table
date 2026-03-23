@@ -616,7 +616,7 @@ if "Week" in section:
     meal_df  = load_meal_plan()
     recipes_df = load_recipes()
     recipe_names = ["— none planned —"] + (
-        recipes_df["Name"].tolist() if not recipes_df.empty else []
+        recipes_df["Name"].tolist() if not recipes_df.empty and "Name" in recipes_df.columns else []
     )
 
     # Freezer items for "use from freezer" suggestions
@@ -755,7 +755,7 @@ elif "Recipe" in section:
                 _recipe_card(row, show_full=True)
 
         # Chicken Pot Pie placeholder
-        if not any("Pot Pie" in str(n) for n in recipes_df["Name"].tolist()):
+        if not any("Pot Pie" in str(n) for n in (recipes_df["Name"].tolist() if "Name" in recipes_df.columns else [])):
             st.divider()
             with st.container(border=True):
                 st.markdown(
